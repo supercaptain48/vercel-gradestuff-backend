@@ -211,6 +211,11 @@ def get_schedule(s):
     return courseList
 
 
+@app.route("/")
+def home():
+    return "Backend for gradestuff app"
+
+
 @app.route("/startup-username=<username>&password=<password>/")
 def get_user(username, password):
     # Login to HAC and create a dictionary to hold all scraped data
