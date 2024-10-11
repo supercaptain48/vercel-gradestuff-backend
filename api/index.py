@@ -3,7 +3,10 @@ from bs4 import BeautifulSoup
 import requests
 
 headers = {
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
+    "Host": "hac.friscoisd.org",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:98.0) Gecko/20100101 Firefox/98.0",
+    'X-Requested-With': 'XMLHttpRequest',
+    "Origin": "https://hac.friscoisd.org",
 }
 
 
@@ -103,14 +106,16 @@ def get_assignments(s):
         "ctl00$plnMain$hdnExtraCredit": "Extra+Credit",
         "ctl00$plnMain$hdnType": "Type",
         "ctl00$plnMain$hdnAssignmentDataInfo": "Information+could+not+be+found+for+the+assignment",
-        "ctl00$plnMain$ddlReportCardRuns": "2-2025",
+        "ctl00$plnMain$ddlReportCardRuns": "2-2024",
         "ctl00$plnMain$ddlClasses": "ALL",
         "ctl00$plnMain$ddlCompetencies": "ALL",
         "ctl00$plnMain$ddlOrderBy": "Class"
     }
 
     # Get student's classes and grades
-    r = s.get(assignmentsurl, data=payload, headers=headers)
+    #s.get(assignmentsurl)
+    r = s.post(assignmentsurl, data=payload, headers=headers)
+    print(r.status_code)
     soup = BeautifulSoup(r.content, 'html.parser')
 
     courseList = []
@@ -194,19 +199,20 @@ def get_schedule(s):
 
         tds = course.find_all("td")
 
-        courseName = tds[1].text.strip()
-        periods = tds[2].text.strip()
-        teacher = tds[3].text.strip()
-        room = tds[4].text.strip()
-        days = tds[5].text.strip()
+        if len(tds) > 3:
+            courseName = tds[1].text.strip()
+            periods = tds[2].text.strip()
+            teacher = tds[3].text.strip()
+            room = tds[4].text.strip()
+            days = tds[5].text.strip()
 
-        dict["courseName"] = courseName
-        dict["periods"] = periods
-        dict["teacher"] = teacher
-        dict["room"] = room
-        dict["days"] = days
+            dict["courseName"] = courseName
+            dict["periods"] = periods
+            dict["teacher"] = teacher
+            dict["room"] = room
+            dict["days"] = days
 
-        courseList.append(dict)
+            courseList.append(dict)
 
     return courseList
 
@@ -226,6 +232,22 @@ def get_user(username, password):
     data["class"] = get_assignments(s)
     data["transcript"] = get_transcript(s)
     data["schedule"] = get_schedule(s)
+
+    return jsonify(data), 200
+
+
+@app.route("/grades-username=<username>&password=<password>/")
+def get_grades(username, password):
+    s = get_session(username, password)
+    data = {"grades": get_assignments(s)}
+
+    return jsonify(data), 200
+
+
+@app.route("/studentinfo-username=<username>&password=<password>/")
+def get_info(username, password):
+    s = get_session(username, password)
+    data = {"name": get_name(s)}
 
     return jsonify(data), 200
 
