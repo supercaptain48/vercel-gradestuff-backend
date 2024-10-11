@@ -53,6 +53,21 @@ def get_name(s):
     return name
 
 
+def scrape_studentInfo(s):
+    r = s.get(studentInfo)
+    soup = BeautifulSoup(r.content, 'html.parser')
+
+    name = soup.find(id='plnMain_lblRegStudentName').text
+    grade = soup.find(id='plnMain_lblGrade').text
+
+    dict = {
+        "name": name,
+        "grade": grade
+    }
+
+    return dict
+
+
 def get_assignments(s):
     payload = {
         "__EVENTTARGET": "ctl00$plnMain$btnRefreshView",
@@ -247,7 +262,7 @@ def get_grades(username, password):
 @app.route("/studentinfo-username=<username>&password=<password>/")
 def get_info(username, password):
     s = get_session(username, password)
-    data = {"name": get_name(s)}
+    data = scrape_studentInfo(s)
 
     return jsonify(data), 200
 
