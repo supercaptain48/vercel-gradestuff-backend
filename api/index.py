@@ -68,7 +68,7 @@ def scrape_studentInfo(s):
     return dict
 
 
-def get_assignments(s):
+def scrape_assignments(s):
     payload = {
         "__EVENTTARGET": "ctl00$plnMain$btnRefreshView",
         "__EVENTARGUMENT": "",
@@ -244,7 +244,7 @@ def get_user(username, password):
     data = {}
 
     data["name"] = get_name(s)
-    data["class"] = get_assignments(s)
+    data["class"] = scrape_assignments(s)
     data["transcript"] = get_transcript(s)
     data["schedule"] = get_schedule(s)
 
@@ -254,7 +254,7 @@ def get_user(username, password):
 @app.route("/grades-username=<username>&password=<password>/")
 def get_grades(username, password):
     s = get_session(username, password)
-    data = {"grades": get_assignments(s)}
+    data = {"grades": scrape_assignments(s)}
 
     return jsonify(data), 200
 
@@ -263,6 +263,19 @@ def get_grades(username, password):
 def get_info(username, password):
     s = get_session(username, password)
     data = scrape_studentInfo(s)
+
+    return jsonify(data), 200
+
+
+@app.route("/gpa-username=<username>&password=<password>")
+def get_gpa(username, password):
+    s = get_session(s)
+
+
+@app.route("/assignments-username=<username>&password=<password>")
+def get_assignments(username, password):
+    s = get_session(username, password)
+    data = {"currentClasses": scrape_assignments(s)}
 
     return jsonify(data), 200
 
