@@ -162,7 +162,7 @@ def scrape_assignments(s):
                 dict["assignments"].append({
                     "name": assignmentName,
                     "category": assignmentCategory,
-                    "grade": assignmentGrade
+                    "score": assignmentGrade
                 })
             except:
                 pass
