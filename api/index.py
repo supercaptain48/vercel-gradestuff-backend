@@ -135,6 +135,8 @@ def scrape_assignments(s):
 
     courseList = []
 
+    quarter = soup.find("option", {"selected": "selected"}).text.strip()
+
     courses = soup.find_all("div", {"class": "AssignmentClass"})
 
     string = "abcd"
@@ -169,7 +171,7 @@ def scrape_assignments(s):
 
         courseList.append(dict)
     
-    return courseList
+    return {"pastClasses": courseList, "quarter": quarter}
 
 
 def get_transcript(s):
@@ -275,7 +277,7 @@ def get_gpa(username, password):
 @app.route("/assignments-username=<username>&password=<password>")
 def get_assignments(username, password):
     s = get_session(username, password)
-    data = {"pastClasses": scrape_assignments(s)}
+    data = scrape_assignments(s)
 
     return jsonify(data), 200
 
