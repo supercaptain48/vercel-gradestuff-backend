@@ -275,7 +275,7 @@ def get_gpa(username, password):
 @app.route("/assignments-username=<username>&password=<password>")
 def get_assignments(username, password):
     s = get_session(username, password)
-    data = {"currentClasses": scrape_assignments(s)}
+    data = {"pastClasses": scrape_assignments(s)}
 
     return jsonify(data), 200
 
