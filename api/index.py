@@ -68,13 +68,18 @@ def scrape_studentInfo(s):
     return dict
 
 
-def scrape_assignments(s):
+def scrape_assignments(s, quarter):
+    r = s.get(assignmentsurl)
+    soup = BeautifulSoup(r.content, 'html.parser')
+
+    viewstate = soup.find('input', {'name': '__VIEWSTATE'}).attrs['value']
+    validation = soup.find('input', {'name': '__EVENTVALIDATION'}).attrs['value']
     payload = {
         "__EVENTTARGET": "ctl00$plnMain$btnRefreshView",
         "__EVENTARGUMENT": "",
-        "__VIEWSTATE": "LrwyU5yvYWT289iRj/pNNwKZo2O+X8qP/hQ8LiPPlKbn5kpP642NF+6ouiPmZ59iZBEpbmk/Y5PZ2ovVtvcsI+da4vo8CJLh7oJKSCYXiTGc8Av88+cVihwOjQT6RELHYNgD8OU3B3uwxpTDdqcn4fyAuEkpQI+u9CEpYVqW3pJ4CdbN6AhhtYVi3ZwGqI/2uhthxYVLRDrxkoUMqQ4IHhgdYlCL5GKBQJkkzkCadlGgbOd1e1ZyQP/zcrADZXyTRV72Zs+Ky7V0GtdB5xVay5AD39My0OjQkNHKOanilrh0nN49tAIY1iV51cd9H40k01hNg+pAP98dfxsY5wG+AJjxTMc+qnimG2f+QGjGwhZOnn6+0PceapFMxP/7Ov70dYdbhprm6kvzyhw+0BE11yS8e35LMDyJI6/X1uhwwsEEkPQjKLnK2yZZzGxXL4grlVgAuAsRmPEJGlyRAnNMbQp9d5VU0AzJnGeqds9MqaRCxOBiafya8ZOY4TZFswdGSo+R0MmFeRwdUydfcXpgSZcgi6P2RGvIT6eKTXbmLiWAU3n/VB6Nz8xw2sCdH/pX1PPFwyzj/V+laZpgNCN5lfsnvfkJ2fW4Alv8nnWV087x/ki8TnxWEsZnDH+J5V2DwicbavJMW9rpYbrvdMVYoK7yzf3SJVOyekK6xGa9R3b5ea5MO6jMYgmOhG6Xi/Pi9TQnwjLNbtl4FaBBHP8aSbeIvHJmXtDKiBY4Ku3N432I8XgLuCd5d6AsZjh9DsZQqwsK+eSkU8Jeaos9HYgmzV6pT9/nm7+AbX3g0LzXqxSLWMiAYhl0T7cTVE92NO+i+A5915ejzaFCXPqxV7FSg5eyPS8R9l5lp7KquFAzPvCKKiHbffBd5OrPJqlwUjea+wjMi/wZX/dYuig1T08YadbK7ulzTSCmLtTmRHcMacpwGUBh2m/GSkrdrqC/KrfNlQQqQuQx/2ZYe48yMtg1ENxz3fI9NIW2HBfIyJ0lYJ9hW+wy2bmBvGnISCfWZRv7aXR9ekWaefXShMjpBrhcLqeDGgeBdMs8+ETaI+TZNhVIkg4eapmKKl8scvc0PP94G4qb58HNVN4MZg1pc3I5SsvfGSuTB2yk0Q7QJrrqPTpKxw1jo6KmBDejFzZbwlehQca6xUL6ijdVlDwm7eEF8VpjkD4cYCQO681MTofAAnYnLt96JDJETwNyHE73miEDPxEu4Ux1I7RcnIE+7vlDcyizSES1tLBi3OeFnZx3NiUcDD1G2PfVTVb0DH3XYlZ23eBzrZTFG8xjiDF1Y6cw+17wVukgHF+VE9lxbPghG6gRYDZ+/yfCefnKJQFQfpjrsBoDj9y/sOo6ydI1dT7aXIoOlqYhs+L4hxDfQI66Frs8s0ZADI9vor4zSWkf/Wjm1MN+ECFJCZb5Yw70Y+ePSqbsOAl7Q6MAG40wojjDjdjKd8RabvZ2ablNqmW1fu15pNte3i3xEYjhRsYkMQSrjfvm9KpCF0710c9XMKD9YTU=",
+        "__VIEWSTATE": viewstate,
         "__VIEWSTATEGENERATOR": "B0093F3C",
-        "__EVENTVALIDATION": "QZRbcthpynGiSmCxn7L1/IR7cCCDnwC9mLHizdX7DxflirHr4cXQ0mPg3hlqfFU9KNe0SMHIrG4QNqAR5ek8NvMcpQTdgFizII6o5EldpRec93IT6yzgiqyex8FBuviaM1J5p+Duar580PiMoERIrQ/+j9ZVE0n9OfF2dQxDV5LI+Rt5U53bnMRPgi29h0yW9VmfxhSQlV3LjqchFv7z0kGoaNuG8SEQ9a/qWBVdd1nsGWx55cBFfqAdVaOBcwe9DtwlP6SgBcj98AoGGP9OVMErk3Si0gcDLG4349O4QYQ+Kcxoi0ZNGCDHctDgMMnVrxWHxz0RvuwWmdKQ9VhO950DRgza9y8Qs3zSS4Yu6MB3Pfr0uz1XcZ4MkJlcn4QufnhtbQCZYGXkuUscPRE3Wc50yM0v0zP7e5YRogUxjVwtQSp+GVQ9376mmo4XM6VuVLOi9vncSYZj9Qc4MM8ZC3C0XucKJNPXU6XUTTFkqFechq4goUGy9OX24aItH/Fe5QR6jAsdlrI2kGJceqqWUhpQZlcALt5fhpjDGIoixeh0PtGOkT2kr98R0p2yY7Ut/MfZVIfPLyoE0EsYcjpXJPb6jyZ9pyEvv6/auJmwT4cXlVmpT3A2t9810y/VGmHeooSFujZSlYssqCx1YIsHfGasAhDYGYIPTy65u/lRWzyOlL9bMAkCkuHVOFFRfWAwFnm4oGYnr5MqideEwJAXaqxg1HoNh7HDJ4kabaFF711oPhOsXy5EhqtFz25nvrim6cw3Gc6wLW7Pw4WMXdhdXxlloX3v+GtsYSxM9Yw0GpfigH2dOoNkPjxsgF91qajYwI6J6rIygumV77NhOjs19TDL3Ec4B/jXTisW0VRevu+kkRHlyjH1PaW7yRAEXNYVve18THmlsi/g9QUJsVb6TIGEIq1qV3SBRaIcuvjC2Pe35S5nD9S2FY/NUxXGIMdkDsZWWI3PelsmYmnrGehHrrjUG+2CChNIvTtSRSB+FC+fY5th2VOfxv1fPWaj31jGwVbYCCCWHOYUWtwgTbIyTV9PtjvOm2+wI7KNFLynOt3cawNVvcTy2RuUqYE8hIHzWpk0wrSKIeFlyOfeUx5FP6oMiO5gRk6aoH2IZelTslt+9iPSV/XrfIFbJW0MLiFLlJXgs9ZUjRNyvMUETBYckr9200La897V7fkWZeHZ+EtKcac0/ZAEenK+FGuk1gscqBF6jwa7mnDnS7WYxYkSZFpXtQzhol+g1mVNpr03C9j1sbYYKKwLBEsxWTmZHVPsgoROYU7rXejoWaPMflq93zuWWifI0QMNtdCiBmFfYa88tlOvMddB7SmmwcUWh2chNYWSmsfM5gNhENRvPuVNOF6nBWcc/nExhsG/PCP75yn6frgS08wOdzcN5BGok2IBE5fOodCE0uLgMJXyZ4GIlbhGxwlLAY+aEq4qqQ7CYSkg//Feqsk2fqXUMuzB10naj/hJDBgcXlQVkJT/ZrE2rYXX53cm9Oz+ufeaz/mu8qla23WK5EQSJktFx5sgD/KFFnKcn2HYVQCjOBafH3A0Ig==",
+        "__EVENTVALIDATION": validation,
         "ctl00$plnMain$hdnValidMHACLicense": "Y",
         "ctl00$plnMain$hdnIsVisibleClsWrk": "N",
         "ctl00$plnMain$hdnIsVisibleCrsAvg": "N",
@@ -121,17 +126,22 @@ def scrape_assignments(s):
         "ctl00$plnMain$hdnExtraCredit": "Extra+Credit",
         "ctl00$plnMain$hdnType": "Type",
         "ctl00$plnMain$hdnAssignmentDataInfo": "Information+could+not+be+found+for+the+assignment",
-        "ctl00$plnMain$ddlReportCardRuns": "2-2024",
+        "ctl00$plnMain$ddlReportCardRuns": f"{quarter}-2025",
         "ctl00$plnMain$ddlClasses": "ALL",
         "ctl00$plnMain$ddlCompetencies": "ALL",
         "ctl00$plnMain$ddlOrderBy": "Class"
     }
+    payload2={"ctl00$plnMain$ddlReportCardRuns": "6-2025"}
 
     # Get student's classes and grades
-    #s.get(assignmentsurl)
-    r = s.post(assignmentsurl, data=payload, headers=headers)
-    print(r.status_code)
-    soup = BeautifulSoup(r.content, 'html.parser')
+    s.get(assignmentsurl)
+    if int(quarter) > 0:
+        r = s.post(assignmentsurl, data=payload, headers=headers)
+        print(r.status_code)
+        soup = BeautifulSoup(r.content, 'html.parser')
+    else:
+        r = s.get(assignmentsurl)
+        soup = BeautifulSoup(r.content, 'html.parser')
 
     courseList = []
 
@@ -171,10 +181,10 @@ def scrape_assignments(s):
 
         courseList.append(dict)
     
-    return {"pastClasses": courseList, "quarter": quarter}
+    return {"grades": courseList, "quarter": quarter}
 
 
-def get_transcript(s):
+def scrape_transcript(s):
     r = s.get(transcripturl)
     soup = BeautifulSoup(r.content, 'html.parser')
 
@@ -246,17 +256,9 @@ def get_user(username, password):
     data = {}
 
     data["name"] = get_name(s)
-    data["class"] = scrape_assignments(s)
-    data["transcript"] = get_transcript(s)
+    data["class"] = scrape_assignments(s, 0)
+    data["transcript"] = scrape_transcript(s)
     data["schedule"] = get_schedule(s)
-
-    return jsonify(data), 200
-
-
-@app.route("/grades-username=<username>&password=<password>/")
-def get_grades(username, password):
-    s = get_session(username, password)
-    data = {"grades": scrape_assignments(s)}
 
     return jsonify(data), 200
 
@@ -271,13 +273,29 @@ def get_info(username, password):
 
 @app.route("/gpa-username=<username>&password=<password>")
 def get_gpa(username, password):
-    s = get_session(s)
+    s = get_session(username, password)
+    assignments = []
+
+    assignments.append(scrape_assignments(s, 0))
+    transcript = scrape_transcript(s)
+
+    while int(assignments[-1]["quarter"]) > 1:
+        assignments.append(scrape_assignments(s, int(assignments["quarter"]) - 1))
+
+    data = (assignments, transcript)
+
+    return jsonify(data), 200
 
 
 @app.route("/assignments-username=<username>&password=<password>")
 def get_assignments(username, password):
     s = get_session(username, password)
-    data = scrape_assignments(s)
+
+    quarter = request.args.get("quarter")
+    if quarter:
+        data = scrape_assignments(s, quarter)
+    else:
+        data = scrape_assignments(s, 0)
 
     return jsonify(data), 200
 
