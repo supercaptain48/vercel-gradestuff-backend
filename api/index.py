@@ -271,7 +271,7 @@ def get_info(username, password):
     return jsonify(data), 200
 
 
-@app.route("/gpa-username=<username>&password=<password>")
+@app.route("/gpa-username=<username>&password=<password>/")
 def get_gpa(username, password):
     s = get_session(username, password)
     assignments = []
@@ -280,14 +280,14 @@ def get_gpa(username, password):
     transcript = scrape_transcript(s)
 
     while int(assignments[-1]["quarter"]) > 1:
-        assignments.append(scrape_assignments(s, int(assignments["quarter"]) - 1))
+        assignments.append(scrape_assignments(s, int(assignments[-1]["quarter"]) - 1))
 
-    data = (assignments, transcript)
+    data = {"current": assignments, "transcript": transcript}
 
     return jsonify(data), 200
 
 
-@app.route("/assignments-username=<username>&password=<password>")
+@app.route("/assignments-username=<username>&password=<password>/")
 def get_assignments(username, password):
     s = get_session(username, password)
 
@@ -296,6 +296,14 @@ def get_assignments(username, password):
         data = scrape_assignments(s, quarter)
     else:
         data = scrape_assignments(s, 0)
+
+    return jsonify(data), 200
+
+
+@app.route("/transcript-username=<username>&password=<password>/")
+def get_transcript(username, password):
+    s = get_session(username, password)
+    data = scrape_transcript(s)
 
     return jsonify(data), 200
 
