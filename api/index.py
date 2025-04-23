@@ -200,10 +200,12 @@ def scrape_transcript(s):
         courses = year.find_all("tr", {"class": "sg-asp-table-data-row"})
         for course in courses:
             tds = course.find_all("td")
+            courseCode = tds[0].text.strip()
             courseName = tds[1].text.strip()
             sem1Grade = tds[2].text.strip()
             sem2Grade = tds[3].text.strip()
             dict["courses"].append({
+                "courseCode": courseCode,
                 "courseName": courseName,
                 "sem1Grade": sem1Grade,
                 "sem2Grade": sem2Grade
