@@ -204,11 +204,13 @@ def scrape_transcript(s):
             courseName = tds[1].text.strip()
             sem1Grade = tds[2].text.strip()
             sem2Grade = tds[3].text.strip()
+            credit = tds[5].text.strip()
             dict["courses"].append({
                 "courseCode": courseCode,
                 "courseName": courseName,
                 "sem1Grade": sem1Grade,
-                "sem2Grade": sem2Grade
+                "sem2Grade": sem2Grade,
+                "credit": credit
             })
         
         transcript.append(dict)
