@@ -236,12 +236,14 @@ def get_schedule(s):
             teacher = tds[3].text.strip()
             room = tds[4].text.strip()
             days = tds[5].text.strip()
+            markingPeriods = tds[6].text.strip()
 
             dict["courseName"] = courseName
             dict["periods"] = periods
             dict["teacher"] = teacher
             dict["room"] = room
             dict["days"] = days
+            dict["markingPeriods"] = markingPeriods
 
             courseList.append(dict)
 
