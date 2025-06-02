@@ -312,6 +312,14 @@ def get_transcript(username, password):
     return jsonify(data), 200
 
 
+@app.route("/schedule-username=<username>&password=<password>/")
+def get_schedule_route(username, password):
+    s = get_session(username, password)
+    data = get_schedule(s)
+
+    return jsonify(data), 200
+
+
 if __name__ == "__main__":
     app.run(debug=True)
 
