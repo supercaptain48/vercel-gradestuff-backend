@@ -57,6 +57,10 @@ def scrape_studentInfo(s):
     r = s.get(studentInfo)
     soup = BeautifulSoup(r.content, 'html.parser')
 
+    while soup is None:
+        r = s.get(studentInfo)
+        soup = BeautifulSoup(r.content, 'html.parser')
+
     name = soup.find(id='plnMain_lblRegStudentName').text
     grade = soup.find(id='plnMain_lblGrade').text
 
@@ -71,6 +75,10 @@ def scrape_studentInfo(s):
 def scrape_assignments(s, quarter):
     r = s.get(assignmentsurl)
     soup = BeautifulSoup(r.content, 'html.parser')
+
+    while soup is None:
+        r = s.get(assignmentsurl)
+        soup = BeautifulSoup(r.content, 'html.parser')
 
     viewstate = soup.find('input', {'name': '__VIEWSTATE'}).attrs['value']
     validation = soup.find('input', {'name': '__EVENTVALIDATION'}).attrs['value']
@@ -139,9 +147,17 @@ def scrape_assignments(s, quarter):
         r = s.post(assignmentsurl, data=payload, headers=headers)
         print(r.status_code)
         soup = BeautifulSoup(r.content, 'html.parser')
+
+        while soup is None:
+            r = s.post(assignmentsurl, data=payload, headers=headers)
+            soup = BeautifulSoup(r.content, 'html.parser')
     else:
         r = s.get(assignmentsurl)
-        soup = BeautifulSoup(r.content, 'html.parser')
+        soup = BeautifulSoup(r.content, 'html.parser')\
+        
+        while soup is None:
+            r = s.get(assignmentsurl)
+            soup = BeautifulSoup(r.content, 'html.parser')
 
     courseList = []
 
@@ -187,6 +203,10 @@ def scrape_assignments(s, quarter):
 def scrape_transcript(s):
     r = s.get(transcripturl)
     soup = BeautifulSoup(r.content, 'html.parser')
+
+    while soup is None:
+        r = s.get(transcripturl)
+        soup = BeautifulSoup(r.content, 'html.parser')
 
     transcript = []
 
