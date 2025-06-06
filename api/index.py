@@ -210,6 +210,16 @@ def scrape_transcript(s):
 
     transcript = []
 
+    weightedGpa = soup.find(id="plnMain_rpTranscriptGroup_lblGPACum1").text.strip()
+    collegeGpa = soup.find(id="plnMain_rpTranscriptGroup_lblGPACum2").text.strip()
+    rank = soup.find(id="plnMain_rpTranscriptGroup_lblGPARank1").text.strip()
+
+    transcript.append({
+        "weightedGpa": weightedGpa,
+        "collegeGpa": collegeGpa,
+        "rank": rank
+    })
+
     years = soup.find_all("td", {"class": "sg-transcript-group"})
     for i, year in enumerate(years):
         dict = {}
