@@ -62,6 +62,11 @@ def scrape_studentInfo(s):
         soup = BeautifulSoup(r.content, 'html.parser')
 
     name = soup.find(id='plnMain_lblRegStudentName').text
+    while soup.find(id='plnMain_lblRegStudentName') is None:
+        r = s.get(studentInfo)
+        soup = BeautifulSoup(r.content, 'html.parser')
+        name = soup.find(id='plnMain_lblRegStudentName').text
+    
     grade = soup.find(id='plnMain_lblGrade').text
 
     dict = {
@@ -81,6 +86,11 @@ def scrape_assignments(s, quarter):
         soup = BeautifulSoup(r.content, 'html.parser')
 
     viewstate = soup.find('input', {'name': '__VIEWSTATE'}).attrs['value']
+    while soup.find('input', {'name': '__VIEWSTATE'}) is None:
+        r = s.get(assignmentsurl)
+        soup = BeautifulSoup(r.content, 'html.parser')
+        viewstate = soup.find('input', {'name': '__VIEWSTATE'}).attrs['value']
+
     validation = soup.find('input', {'name': '__EVENTVALIDATION'}).attrs['value']
     payload = {
         "__EVENTTARGET": "ctl00$plnMain$btnRefreshView",
@@ -162,6 +172,22 @@ def scrape_assignments(s, quarter):
     courseList = []
 
     quarter = soup.find("option", {"selected": "selected"}).text.strip()
+    while soup.find("option", {"selected": "selected"}) is None:
+        if int(quarter) > 0:
+            r = s.post(assignmentsurl, data=payload, headers=headers)
+            print(r.status_code)
+            soup = BeautifulSoup(r.content, 'html.parser')
+
+            while soup is None:
+                r = s.post(assignmentsurl, data=payload, headers=headers)
+                soup = BeautifulSoup(r.content, 'html.parser')
+        else:
+            r = s.get(assignmentsurl)
+            soup = BeautifulSoup(r.content, 'html.parser')\
+            
+            while soup is None:
+                r = s.get(assignmentsurl)
+                soup = BeautifulSoup(r.content, 'html.parser')
 
     courses = soup.find_all("div", {"class": "AssignmentClass"})
 
@@ -211,6 +237,11 @@ def scrape_transcript(s):
     transcript = []
 
     weightedGpa = soup.find(id="plnMain_rpTranscriptGroup_lblGPACum1").text.strip()
+    while soup.find(id="plnMain_rpTranscriptGroup_lblGPACum1") is None:
+        r = s.get(transcripturl)
+        soup = BeautifulSoup(r.content, 'html.parser')
+        weightedGpa = soup.find(id="plnMain_rpTranscriptGroup_lblGPACum1").text.strip()
+
     collegeGpa = soup.find(id="plnMain_rpTranscriptGroup_lblGPACum2").text.strip()
     rank = soup.find(id="plnMain_rpTranscriptGroup_lblGPARank1").text.strip()
 
