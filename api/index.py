@@ -64,7 +64,6 @@ def scrape_studentInfo(s):
     while soup.find(id='plnMain_lblRegStudentName') is None:
         r = s.get(studentInfo)
         soup = BeautifulSoup(r.content, 'html.parser')
-        name = soup.find(id='plnMain_lblRegStudentName').text
     name = soup.find(id='plnMain_lblRegStudentName').text
     
     grade = soup.find(id='plnMain_lblGrade').text
@@ -88,7 +87,6 @@ def scrape_assignments(s, quarter):
     while soup.find('input', {'name': '__VIEWSTATE'}) is None:
         r = s.get(assignmentsurl)
         soup = BeautifulSoup(r.content, 'html.parser')
-        viewstate = soup.find('input', {'name': '__VIEWSTATE'}).attrs['value']
     viewstate = soup.find('input', {'name': '__VIEWSTATE'}).attrs['value']
 
     validation = soup.find('input', {'name': '__EVENTVALIDATION'}).attrs['value']
@@ -240,7 +238,6 @@ def scrape_transcript(s):
     while soup.find(id="plnMain_rpTranscriptGroup_lblGPACum1") is None:
         r = s.get(transcripturl)
         soup = BeautifulSoup(r.content, 'html.parser')
-        weightedGpa = soup.find(id="plnMain_rpTranscriptGroup_lblGPACum1").text.strip()
     weightedGpa = soup.find(id="plnMain_rpTranscriptGroup_lblGPACum1").text.strip()
 
     collegeGpa = soup.find(id="plnMain_rpTranscriptGroup_lblGPACum2").text.strip()
