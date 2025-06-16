@@ -161,7 +161,7 @@ def scrape_assignments(s, quarter):
             soup = BeautifulSoup(r.content, 'html.parser')
     else:
         r = s.get(assignmentsurl)
-        soup = BeautifulSoup(r.content, 'html.parser')\
+        soup = BeautifulSoup(r.content, 'html.parser')
         
         while soup is None:
             r = s.get(assignmentsurl)
@@ -190,8 +190,15 @@ def scrape_assignments(s, quarter):
 
     courses = soup.find_all("div", {"class": "AssignmentClass"})
 
-    string = "abcd"
-    string[2:]
+    categoryTable = soup.find(id="plnMain_rptAssigmnetsByCourse_dgCourseCategories_0")
+    categoryWeights = categoryTable.find_all("tr", {"class": "sg-asp-table-data-row"})
+    categoryWeightsDict = {}
+    for category in categoryWeights:
+        tds = category.find_all("td")
+        name = tds[0].text.strip()
+        weight = tds[4].text.strip()
+        
+        categoryWeightsDict[name] = weight
 
     for course in courses:
         dict = {}
@@ -212,6 +219,7 @@ def scrape_assignments(s, quarter):
                 assignmentName = assignment.find("a").text.strip()
                 assignmentCategory = tds[3].text.strip()
                 assignmentGrade = tds[4].text.strip()
+
                 dict["assignments"].append({
                     "name": assignmentName,
                     "category": assignmentCategory,
@@ -222,7 +230,7 @@ def scrape_assignments(s, quarter):
 
         courseList.append(dict)
     
-    return {"grades": courseList, "quarter": quarter}
+    return {"grades": courseList, "quarter": quarter, "weights": categoryWeightsDict}
 
 
 def scrape_transcript(s):
