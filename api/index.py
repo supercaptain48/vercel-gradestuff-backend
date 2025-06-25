@@ -57,13 +57,8 @@ def scrape_studentInfo(s):
     r = s.get(studentInfo)
     soup = BeautifulSoup(r.content, 'html.parser')
 
-    while soup is None:
-        r = s.get(studentInfo)
-        soup = BeautifulSoup(r.content, 'html.parser')
-
-    while soup.find(id='plnMain_lblRegStudentName') is None:
-        r = s.get(studentInfo)
-        soup = BeautifulSoup(r.content, 'html.parser')
+    r = s.get(studentInfo)
+    soup = BeautifulSoup(r.content, 'html.parser')
     name = soup.find(id='plnMain_lblRegStudentName').text
     
     grade = soup.find(id='plnMain_lblGrade').text
@@ -80,13 +75,8 @@ def scrape_assignments(s, quarter):
     r = s.get(assignmentsurl)
     soup = BeautifulSoup(r.content, 'html.parser')
 
-    while soup is None:
-        r = s.get(assignmentsurl)
-        soup = BeautifulSoup(r.content, 'html.parser')
-
-    while soup.find('input', {'name': '__VIEWSTATE'}) is None:
-        r = s.get(assignmentsurl)
-        soup = BeautifulSoup(r.content, 'html.parser')
+    r = s.get(assignmentsurl)
+    soup = BeautifulSoup(r.content, 'html.parser')
     viewstate = soup.find('input', {'name': '__VIEWSTATE'}).attrs['value']
 
     validation = soup.find('input', {'name': '__EVENTVALIDATION'}).attrs['value']
@@ -169,23 +159,16 @@ def scrape_assignments(s, quarter):
 
     courseList = []
 
-    
-    while soup.find("option", {"selected": "selected"}) is None:
-        if int(quarter) > 0:
-            r = s.post(assignmentsurl, data=payload, headers=headers)
-            print(r.status_code)
-            soup = BeautifulSoup(r.content, 'html.parser')
 
-            while soup is None:
-                r = s.post(assignmentsurl, data=payload, headers=headers)
-                soup = BeautifulSoup(r.content, 'html.parser')
-        else:
-            r = s.get(assignmentsurl)
-            soup = BeautifulSoup(r.content, 'html.parser')\
-            
-            while soup is None:
-                r = s.get(assignmentsurl)
-                soup = BeautifulSoup(r.content, 'html.parser')
+    if int(quarter) > 0:
+        r = s.post(assignmentsurl, data=payload, headers=headers)
+        print(r.status_code)
+        soup = BeautifulSoup(r.content, 'html.parser')
+
+    else:
+        r = s.get(assignmentsurl)
+        soup = BeautifulSoup(r.content, 'html.parser')
+
     quarter = soup.find("option", {"selected": "selected"}).text.strip()
 
     courses = soup.find_all("div", {"class": "AssignmentClass"})
@@ -219,11 +202,13 @@ def scrape_assignments(s, quarter):
                 assignmentName = assignment.find("a").text.strip()
                 assignmentCategory = tds[3].text.strip()
                 assignmentGrade = tds[4].text.strip()
+                totalPoints = tds[5].text.strip()
 
                 dict["assignments"].append({
                     "name": assignmentName,
                     "category": assignmentCategory,
-                    "score": assignmentGrade
+                    "score": assignmentGrade,
+                    "totalPoints": totalPoints
                 })
             except:
                 pass
@@ -237,15 +222,10 @@ def scrape_transcript(s):
     r = s.get(transcripturl)
     soup = BeautifulSoup(r.content, 'html.parser')
 
-    while soup is None:
-        r = s.get(transcripturl)
-        soup = BeautifulSoup(r.content, 'html.parser')
-
     transcript = []
 
-    while soup.find(id="plnMain_rpTranscriptGroup_lblGPACum1") is None:
-        r = s.get(transcripturl)
-        soup = BeautifulSoup(r.content, 'html.parser')
+    r = s.get(transcripturl)
+    soup = BeautifulSoup(r.content, 'html.parser')
     weightedGpa = soup.find(id="plnMain_rpTranscriptGroup_lblGPACum1").text.strip()
 
     collegeGpa = soup.find(id="plnMain_rpTranscriptGroup_lblGPACum2").text.strip()
