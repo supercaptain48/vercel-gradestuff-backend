@@ -59,13 +59,22 @@ def scrape_studentInfo(s):
 
     r = s.get(studentInfo)
     soup = BeautifulSoup(r.content, 'html.parser')
+
     name = soup.find(id='plnMain_lblRegStudentName').text
-    
     grade = soup.find(id='plnMain_lblGrade').text
+    building = soup.find(id='plnMain_lblBuildingName').text
+    studentId = soup.find(id='plnMain_lblRegStudentID').text
+    birthdate = soup.find(id='plnMain_lblBirthDate').text
+
+    print(building, studentId, birthdate)
+
 
     dict = {
         "name": name,
-        "grade": grade
+        "grade": grade,
+        "building": building,
+        "studentId": studentId,
+        "birthdate": birthdate
     }
 
     return dict
