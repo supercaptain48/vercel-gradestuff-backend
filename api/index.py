@@ -83,9 +83,6 @@ def scrape_studentInfo(s):
 def scrape_assignments(s, quarter):
     r = s.get(assignmentsurl)
     soup = BeautifulSoup(r.content, 'html.parser')
-
-    r = s.get(assignmentsurl)
-    soup = BeautifulSoup(r.content, 'html.parser')
     viewstate = soup.find('input', {'name': '__VIEWSTATE'}).attrs['value']
 
     validation = soup.find('input', {'name': '__EVENTVALIDATION'}).attrs['value']
@@ -149,34 +146,22 @@ def scrape_assignments(s, quarter):
     payload2={"ctl00$plnMain$ddlReportCardRuns": "6-2026"}
 
     # Get student's classes and grades
-    s.get(assignmentsurl)
     if int(quarter) > 0:
         r = s.post(assignmentsurl, data=payload, headers=headers)
-        print(r.status_code)
         soup = BeautifulSoup(r.content, 'html.parser')
 
-        while soup is None:
-            r = s.post(assignmentsurl, data=payload, headers=headers)
-            soup = BeautifulSoup(r.content, 'html.parser')
+        # while soup is None:
+        #     r = s.post(assignmentsurl, data=payload, headers=headers)
+        #     soup = BeautifulSoup(r.content, 'html.parser')
     else:
         r = s.get(assignmentsurl)
         soup = BeautifulSoup(r.content, 'html.parser')
         
-        while soup is None:
-            r = s.get(assignmentsurl)
-            soup = BeautifulSoup(r.content, 'html.parser')
+        # while soup is None:
+        #     r = s.get(assignmentsurl)
+        #     soup = BeautifulSoup(r.content, 'html.parser')
 
     courseList = []
-
-
-    if int(quarter) > 0:
-        r = s.post(assignmentsurl, data=payload, headers=headers)
-        print(r.status_code)
-        soup = BeautifulSoup(r.content, 'html.parser')
-
-    else:
-        r = s.get(assignmentsurl)
-        soup = BeautifulSoup(r.content, 'html.parser')
 
     quarter = soup.find("option", {"selected": "selected"}).text.strip()
 
