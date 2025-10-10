@@ -143,7 +143,10 @@ def scrape_assignments(s, quarter):
     #     "ctl00$plnMain$ddlCompetencies": "ALL",
     #     "ctl00$plnMain$ddlOrderBy": "Class"
     # }
-    payload2={"ctl00$plnMain$ddlReportCardRuns": "6-2026"}
+    payload2={
+        "ctl00$plnMain$ddlReportCardRuns": "6-2026",
+        "ctl00$plnMain$ddlReportCardRuns": f"{quarter}-2026",
+    }
 
     # Get student's classes and grades
     if int(quarter) > 0:
